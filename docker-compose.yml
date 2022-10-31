@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  master:
+    container_name: master
+    image: app/master
+    working_dir: /code/app
+    build:
+      context: .
+      dockerfile: app/master/Dockerfile
+    command: uvicorn master.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      DEBUG: 1
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    restart: on-failure
+  
+  web-node1:
+    container_name: web-node1
+    image: app/secondary
+    working_dir: /code/app
+    build: 
+      context: .
+      dockerfile: app/secondary/Dockerfile
+    command: uvicorn secondary.main:app --host 0.0.0.0 --port 8010 --reload
+    environment:
+      DEBUG: 1
+    volumes:
+      - .:/code
+    ports:
+      - "8010:8010"
+    expose:
+      - "8010"
+    restart: on-failure
+    depends_on:
+      - "master"
+  
+  web-node2:
+    container_name: web-node2
+    image: app/secondary
+    working_dir: /code/app
+    build: 
+      context: .
+      dockerfile: app/secondary/Dockerfile
+    command: uvicorn secondary.main:app --host 0.0.0.0 --port 8020 --reload
+    environment:
+      DEBUG: 1
+    volumes:
+      - .:/code
+    ports:
+      - "8020:8020"
+    expose:
+      - "8020"
+    restart: on-failure
+    depends_on:
+      - "master"
