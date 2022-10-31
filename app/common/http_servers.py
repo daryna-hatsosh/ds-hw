@@ -1,30 +1,40 @@
 import asyncio
-from typing import Dict, Tuple
-import requests
 import logging
+from enum import Enum
+from typing import Dict
+
+import requests
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
-class MessageHub():
-    def __init__(self, start_count = 0):
+
+class MessageHub:
+    def __init__(self, start_count=0):
         self.message_id_counter = start_count
         self.messages = []
-    
+
     def _increase_count(self):
         self.message_id_counter += 1
-    
+
     def add_message(self, message):
         self._increase_count()
         message = {"message_id": self.message_id_counter, "message": message}
         self.messages.append(message)
         return message
-    
+
     def get_messages(self):
         return self.messages
-    
+
     def get_current_message_id_counter(self):
         return self.message_id_counter
+
+
+class HealthStatus(str, Enum):
+    healthy = "Healthy"
+    suspected = "Suspected"
+    unhealthy = "Unhealthy"
+
 
 def post(server, message):
     try:
@@ -35,6 +45,7 @@ def post(server, message):
     except:
         return {"status_code": -1, "server": server}
 
+
 async def ping(server, results, message):
     loop = asyncio.get_event_loop()
     future_result = loop.run_in_executor(None, post, server, message)
@@ -44,12 +55,14 @@ async def ping(server, results, message):
     else:
         results["failure"].append(server)
 
+
 async def make_requests(servers, results, message):
     tasks = []
     for server in servers:
         task = asyncio.create_task(ping(server, results, message))
         tasks.append(task)
     await asyncio.gather(*tasks)
+
 
 def ping_servers(servers, message: Dict[int, str]):
     results = {"success": [], "failure": []}

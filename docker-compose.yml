@@ -18,12 +18,12 @@ services:
     expose:
       - "8000"
     restart: on-failure
-  
+
   web-node1:
     container_name: web-node1
     image: app/secondary
     working_dir: /code/app
-    build: 
+    build:
       context: .
       dockerfile: app/secondary/Dockerfile
     command: uvicorn secondary.main:app --host 0.0.0.0 --port 8010 --reload
@@ -38,12 +38,12 @@ services:
     restart: on-failure
     depends_on:
       - "master"
-  
+
   web-node2:
     container_name: web-node2
     image: app/secondary
     working_dir: /code/app
-    build: 
+    build:
       context: .
       dockerfile: app/secondary/Dockerfile
     command: uvicorn secondary.main:app --host 0.0.0.0 --port 8020 --reload

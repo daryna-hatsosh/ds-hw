@@ -1,15 +1,10 @@
-import asyncio
-
-import uuid
 import logging
-from pydantic import BaseSettings, Field
-import requests
 
-from fastapi import FastAPI
 import uvicorn
 from common.http_servers import MessageHub
-
 from common.http_servers import ping_servers
+from fastapi import FastAPI
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -18,6 +13,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
 
 settings = Settings()
 message_hub = MessageHub()
