@@ -16,12 +16,12 @@ logger.info("INFO: secondary booted up")
 
 
 @app.get("/messages")
-def read_root():
+def get_messages():
     return message_list
 
 
 @app.get("/health")
-def read_root():
+def get_health():
     return {"status": HealthStatus.healthy}
 
 

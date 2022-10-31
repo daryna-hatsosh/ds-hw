@@ -27,13 +27,8 @@ logger.info("master booted up")
 
 
 @app.get("/messages")
-def read_root():
+def get_messages():
     return message_hub.get_messages()
-
-
-@app.get("/settings")
-def get_settings():
-    return settings
 
 
 @app.post("/messages")
@@ -41,8 +36,9 @@ def create_message(message: str):
     message_with_id = message_hub.add_message(message)
     logger.info("PING SERVERS")
     logger.info(message_with_id)
-    r = ping_servers([settings.sec_url_1, settings.sec_url_2], message_with_id)
-    logger.info(r)
+    results = ping_servers([settings.sec_url_1, settings.sec_url_2], message_with_id)
+    logger.info(results)
+    return results
 
 
 if __name__ == "__main__":
